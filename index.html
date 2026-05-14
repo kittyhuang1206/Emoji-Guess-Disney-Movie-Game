@@ -1,0 +1,967 @@
+<div id="app"></div>
+
+<style>
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    font-family: "Poppins", "Segoe UI", system-ui, sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+    background: linear-gradient(180deg, #bde7ff 0%, #f9d6ff 45%, #fff4cc 100%);
+  }
+
+  .page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 28px 24px 54px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .castle {
+    position: fixed;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 1300px;
+    max-width: 150vw;
+    height: 430px;
+    opacity: 0.35;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .castle * {
+    position: absolute;
+  }
+
+  .tower {
+    bottom: 0;
+    width: 90px;
+    background: linear-gradient(#fff7fd, #ffd6ef);
+    border: 4px solid rgba(255, 255, 255, 0.8);
+    border-radius: 30px 30px 0 0;
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.8);
+  }
+
+  .tower:before {
+    content: "";
+    position: absolute;
+    top: -82px;
+    left: -8px;
+    width: 0;
+    height: 0;
+    border-left: 53px solid transparent;
+    border-right: 53px solid transparent;
+    border-bottom: 88px solid #9d7bff;
+  }
+
+  .tower:after {
+    content: "✨";
+    position: absolute;
+    top: -115px;
+    left: 32px;
+    font-size: 34px;
+  }
+
+  .tower1 { left: 170px; height: 210px; }
+  .tower2 { left: 300px; height: 280px; }
+  .tower3 { left: 485px; height: 335px; width: 110px; }
+  .tower4 { right: 300px; height: 280px; }
+  .tower5 { right: 170px; height: 210px; }
+
+  .base {
+    bottom: 0;
+    left: 260px;
+    width: 530px;
+    height: 170px;
+    background: linear-gradient(#fff7fd, #ffc8e7);
+    border-radius: 42px 42px 0 0;
+    border: 4px solid rgba(255, 255, 255, 0.85);
+  }
+
+  .door {
+    bottom: 0;
+    left: 475px;
+    width: 96px;
+    height: 112px;
+    background: linear-gradient(#8c5eff, #5130c8);
+    border-radius: 50px 50px 0 0;
+  }
+
+  .cloud {
+    position: fixed;
+    background: rgba(255, 255, 255, 0.72);
+    border-radius: 999px;
+    filter: blur(1px);
+    z-index: 0;
+  }
+
+  .cloud:before,
+  .cloud:after {
+    content: "";
+    position: absolute;
+    background: inherit;
+    border-radius: 50%;
+  }
+
+  .cloud1 {
+    top: 12%;
+    left: 8%;
+    width: 140px;
+    height: 44px;
+  }
+
+  .cloud1:before {
+    width: 64px;
+    height: 64px;
+    left: 22px;
+    top: -28px;
+  }
+
+  .cloud1:after {
+    width: 80px;
+    height: 80px;
+    right: 18px;
+    top: -38px;
+  }
+
+  .cloud2 {
+    top: 20%;
+    right: 7%;
+    width: 170px;
+    height: 52px;
+  }
+
+  .cloud2:before {
+    width: 72px;
+    height: 72px;
+    left: 28px;
+    top: -32px;
+  }
+
+  .cloud2:after {
+    width: 88px;
+    height: 88px;
+    right: 20px;
+    top: -44px;
+  }
+
+  .sparkle {
+    position: fixed;
+    font-size: 24px;
+    opacity: 0.8;
+    animation: floaty 4s ease-in-out infinite;
+    z-index: 0;
+  }
+
+  .s1 { top: 11%; right: 25%; animation-delay: 0s; }
+  .s2 { top: 28%; left: 18%; animation-delay: 1s; }
+  .s3 { bottom: 22%; right: 18%; animation-delay: 2s; }
+
+  @keyframes floaty {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-16px) rotate(10deg); }
+  }
+
+  .side-float {
+    position: fixed;
+    z-index: 1;
+    pointer-events: none;
+    font-size: clamp(2.5rem, 5vw, 5rem);
+    animation: sideFloat 4.5s ease-in-out infinite;
+    filter: drop-shadow(0 10px 18px rgba(100, 70, 160, 0.22));
+  }
+
+  .float-left-1 { left: 5%; top: 24%; animation-delay: 0s; }
+  .float-left-2 { left: 8%; bottom: 24%; animation-delay: 1.5s; }
+  .float-right-1 { right: 6%; top: 22%; animation-delay: 0.8s; }
+  .float-right-2 { right: 8%; bottom: 25%; animation-delay: 2.2s; }
+
+  @keyframes sideFloat {
+    0%, 100% {
+      transform: translateY(0) rotate(-4deg) scale(1);
+    }
+    50% {
+      transform: translateY(-24px) rotate(5deg) scale(1.08);
+    }
+  }
+
+  .magic-orb {
+    position: fixed;
+    width: 110px;
+    height: 110px;
+    border-radius: 999px;
+    background: radial-gradient(circle, rgba(255,255,255,0.9), rgba(255,142,216,0.38), rgba(141,123,255,0.05));
+    z-index: 0;
+    animation: orbPulse 5s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  .orb-left { left: 3%; top: 48%; }
+  .orb-right { right: 4%; top: 52%; animation-delay: 1.5s; }
+
+  @keyframes orbPulse {
+    0%, 100% {
+      transform: scale(1);
+      opacity: 0.45;
+    }
+    50% {
+      transform: scale(1.25);
+      opacity: 0.8;
+    }
+  }
+
+  .card,
+  .game-card {
+    position: relative;
+    z-index: 2;
+    max-width: 760px;
+    width: min(92vw, 760px);
+    background: rgba(255,255,255,0.92);
+    border: 4px solid rgba(255,255,255,0.95);
+    border-radius: 40px;
+    padding: 40px 34px 32px;
+    box-shadow: 0 28px 90px rgba(115, 70, 180, 0.28);
+    text-align: center;
+  }
+
+  .title {
+    margin: 8px 0 6px;
+    color: #5b3cc4;
+    font-size: clamp(2.2rem, 6vw, 3.5rem);
+    font-weight: 900;
+    letter-spacing: -1px;
+  }
+
+  .subtitle {
+    color: #7c6aa8;
+    font-size: 1.15rem;
+    margin: 0 0 22px;
+    font-weight: 600;
+  }
+
+  .lang-toggle {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 16px;
+  }
+
+  .lang-toggle button {
+    border: none;
+    padding: 9px 14px;
+    border-radius: 999px;
+    font-weight: 800;
+    cursor: pointer;
+    background: rgba(255,255,255,0.75);
+    color: #6d5ba5;
+    box-shadow: 0 6px 16px rgba(90, 60, 160, 0.12);
+  }
+
+  .lang-toggle button.active {
+    background: linear-gradient(135deg, #ff8ed8, #8d7bff);
+    color: white;
+  }
+
+  .rules {
+    background: linear-gradient(135deg, rgba(255, 237, 250, 0.95), rgba(238, 246, 255, 0.95));
+    border-radius: 22px;
+    padding: 16px;
+    margin: 20px 0;
+    text-align: left;
+  }
+
+  .rule {
+    display: flex;
+    gap: 10px;
+    padding: 7px 4px;
+    color: #67558e;
+    font-weight: 700;
+    font-size: 0.93rem;
+  }
+
+  .button {
+    border: none;
+    background: linear-gradient(135deg, #ff8ed8, #8d7bff);
+    color: white;
+    font-weight: 900;
+    font-size: 1.08rem;
+    padding: 15px 36px;
+    border-radius: 999px;
+    cursor: pointer;
+    box-shadow: 0 12px 28px rgba(141, 123, 255, 0.35);
+    transition: 0.15s;
+  }
+
+  .button:hover {
+    transform: translateY(-2px) scale(1.02);
+  }
+
+  .topbar {
+    position: relative;
+    z-index: 2;
+    max-width: 760px;
+    width: min(92vw, 760px);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .topstat {
+    min-width: 78px;
+    background: rgba(255,255,255,0.82);
+    border-radius: 18px;
+    padding: 9px;
+    text-align: center;
+    color: #5b3cc4;
+    font-weight: 900;
+    box-shadow: 0 8px 22px rgba(100, 72, 180, 0.12);
+  }
+
+  .toplabel {
+    display: block;
+    font-size: 0.68rem;
+    color: #9b89c7;
+    letter-spacing: 0.5px;
+  }
+
+  .progress {
+    flex: 1;
+    height: 12px;
+    background: rgba(255,255,255,0.75);
+    border-radius: 999px;
+    overflow: hidden;
+    box-shadow: inset 0 0 0 2px rgba(255,255,255,0.8);
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #ff8ed8, #ffd36e, #8d7bff);
+    transition: width 0.4s ease;
+  }
+
+  .timer {
+    position: relative;
+    z-index: 2;
+    max-width: 760px;
+    width: min(92vw, 760px);
+    height: 9px;
+    background: rgba(255,255,255,0.7);
+    border-radius: 999px;
+    overflow: hidden;
+    margin-bottom: 6px;
+  }
+
+  .timer-fill {
+    height: 100%;
+    border-radius: 999px;
+    transition: width 1s linear;
+  }
+
+  .time-text {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    font-weight: 900;
+    margin-bottom: 12px;
+  }
+
+  .year {
+    position: absolute;
+    top: 16px;
+    right: 18px;
+    background: #fff0fb;
+    color: #8d61c5;
+    border-radius: 999px;
+    padding: 5px 12px;
+    font-weight: 900;
+    font-size: 0.78rem;
+  }
+
+  .emoji-box {
+    min-height: 160px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: clamp(4.2rem, 12vw, 7rem);
+    letter-spacing: 12px;
+    line-height: 1.2;
+    background: linear-gradient(135deg, #fff7d7, #ffe2f6);
+    border-radius: 34px;
+    margin: 22px 0 24px;
+    box-shadow: inset 0 0 0 4px rgba(255,255,255,0.85);
+  }
+
+  .hint {
+    background: #f1eaff;
+    color: #6b4fc2;
+    border: 2px dashed #b6a4ff;
+    border-radius: 18px;
+    padding: 11px 14px;
+    margin-bottom: 16px;
+    font-weight: 700;
+  }
+
+  .choices {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+
+  .choice {
+    border: 3px solid #eadfff;
+    border-radius: 22px;
+    background: #ffffff;
+    color: #5c4c83;
+    padding: 16px 12px;
+    font-size: 1.05rem;
+    font-weight: 900;
+    cursor: pointer;
+    min-height: 72px;
+    box-shadow: 0 8px 18px rgba(116, 92, 190, 0.12);
+    transition: 0.15s;
+  }
+
+  .choice:hover {
+    transform: translateY(-2px);
+    border-color: #c8b8ff;
+  }
+
+  .choice.correct {
+    background: #dcfce7;
+    color: #166534;
+    border-color: #22c55e;
+  }
+
+  .choice.wrong {
+    background: #fee2e2;
+    color: #991b1b;
+    border-color: #ef4444;
+  }
+
+  .hint-button {
+    margin-top: 16px;
+    border: none;
+    background: #fff0fb;
+    color: #8653b8;
+    border-radius: 999px;
+    padding: 10px 20px;
+    font-weight: 900;
+    cursor: pointer;
+  }
+
+  .hint-button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .toast {
+    position: fixed;
+    top: 20px;
+    z-index: 9;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, #ff8ed8, #ffd36e);
+    color: white;
+    padding: 12px 28px;
+    border-radius: 999px;
+    font-weight: 900;
+    box-shadow: 0 12px 28px rgba(120,80,180,0.25);
+  }
+
+  .result-score {
+    font-size: 3.5rem;
+    font-weight: 1000;
+    color: #ff8ed8;
+    margin: 8px 0;
+  }
+
+  .grade {
+    display: inline-block;
+    padding: 9px 22px;
+    border-radius: 999px;
+    font-weight: 900;
+    color: #6b4fc2;
+    background: #f1eaff;
+    margin: 10px 0 20px;
+  }
+
+  .stats {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 22px;
+  }
+
+  .statbox {
+    flex: 1;
+    background: #fff5fb;
+    border-radius: 18px;
+    padding: 14px 8px;
+  }
+
+  .statnum {
+    font-size: 1.5rem;
+    font-weight: 1000;
+    color: #8d7bff;
+  }
+
+  .statlabel {
+    font-size: 0.72rem;
+    color: #947fb8;
+    font-weight: 800;
+  }
+
+  .credit {
+    position: fixed;
+    bottom: 10px;
+    right: 14px;
+    z-index: 4;
+    font-size: 0.78rem;
+    color: #755ca8;
+    background: rgba(255,255,255,0.72);
+    padding: 7px 12px;
+    border-radius: 999px;
+    font-weight: 800;
+  }
+
+  .timeout {
+    position: relative;
+    z-index: 3;
+    margin-top: 10px;
+    background: rgba(255,255,255,0.82);
+    padding: 10px 16px;
+    border-radius: 999px;
+    color: #d94668;
+    font-weight: 900;
+  }
+
+  @media (max-width: 900px) {
+    .side-float,
+    .magic-orb {
+      display: none;
+    }
+
+    .card,
+    .game-card {
+      max-width: 620px;
+    }
+  }
+
+  @media (max-width: 540px) {
+    .choices {
+      grid-template-columns: 1fr;
+    }
+
+    .emoji-box {
+      letter-spacing: 4px;
+      font-size: 4rem;
+    }
+
+    .stats {
+      flex-direction: column;
+    }
+  }
+</style>
+
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+
+<script>
+  const { useState, useEffect, useRef } = React;
+
+  const MOVIES = [
+    { emojis: "🦁👑🌅", answer: "The Lion King", zhAnswer: "獅子王", hint: "A young prince must reclaim his father's throne", zhHint: "一位年輕王子必須找回屬於自己的王位", year: 1994 },
+    { emojis: "❄️👸⛄🏔️", answer: "Frozen", zhAnswer: "冰雪奇緣", hint: "Two sisters, one with ice powers", zhHint: "兩位姊妹，其中一位擁有冰雪魔法", year: 2013 },
+    { emojis: "🧜‍♀️🐠🔱", answer: "The Little Mermaid", zhAnswer: "小美人魚", hint: "A mermaid dreams of the human world", zhHint: "一位人魚公主夢想前往人類世界", year: 1989 },
+    { emojis: "🍎💤👸7️⃣", answer: "Snow White", zhAnswer: "白雪公主", hint: "A princess bites a poisoned apple", zhHint: "一位公主吃下了毒蘋果", year: 1937 },
+    { emojis: "🪄🐭🎠🕛", answer: "Cinderella", zhAnswer: "仙履奇緣", hint: "A glass slipper changes everything at midnight", zhHint: "午夜時分，玻璃鞋改變了一切", year: 1950 },
+    { emojis: "🐘✈️🎪👂", answer: "Dumbo", zhAnswer: "小飛象", hint: "A little elephant who can fly with big ears", zhHint: "一隻用大耳朵飛翔的小象", year: 1941 },
+    { emojis: "🧚🏻🐊⚓🪝", answer: "Peter Pan", zhAnswer: "小飛俠", hint: "Never grow up in Neverland", zhHint: "在夢幻島裡永遠不要長大", year: 1953 },
+    { emojis: "👩‍❤️‍👨🕯️🧌📚", answer: "Beauty and the Beast", zhAnswer: "美女與野獸", hint: "A rose, a castle, and a love story", zhHint: "玫瑰、城堡，還有一段愛的故事", year: 1991 },
+    { emojis: "🧞‍♂️🪔✨👸", answer: "Aladdin", zhAnswer: "阿拉丁", hint: "Three wishes and a magic carpet", zhHint: "三個願望與一張魔毯", year: 1992 },
+    { emojis: "🐠🐡💦🧠", answer: "Finding Nemo", zhAnswer: "海底總動員", hint: "A father crosses the ocean for his son", zhHint: "爸爸橫越大海尋找兒子", year: 2003 },
+    { emojis: "🤖🌱🚀🌍", answer: "WALL-E", zhAnswer: "瓦力", hint: "A lonely robot finds love in space", zhHint: "孤單的機器人在太空中找到愛", year: 2008 },
+    { emojis: "👧🐀🍳🇫🇷", answer: "Ratatouille", zhAnswer: "料理鼠王", hint: "A rat dreams of being a chef in Paris", zhHint: "一隻老鼠夢想在巴黎成為廚師", year: 2007 },
+    { emojis: "👴🎈🏡🌈", answer: "Up", zhAnswer: "天外奇蹟", hint: "A house tied to balloons flies away", zhHint: "一棟綁滿氣球的房子飛上天空", year: 2009 },
+    { emojis: "🧸♾️🚀🤠", answer: "Toy Story", zhAnswer: "玩具總動員", hint: "Toys come alive when no one's watching", zhHint: "沒有人看的時候，玩具們就活了起來", year: 1995 },
+    { emojis: "👧🐱🎩🃏", answer: "Alice in Wonderland", zhAnswer: "愛麗絲夢遊仙境", hint: "Down the rabbit hole into a mad world", zhHint: "掉進兔子洞，進入奇幻世界", year: 1951 },
+    { emojis: "🦸‍♀️🦸‍♂️🌆💥", answer: "The Incredibles", zhAnswer: "超人特攻隊", hint: "A whole family of superheroes in hiding", zhHint: "一家人都是隱藏身分的超級英雄", year: 2004 },
+    { emojis: "🏎️🏆⚡🔧", answer: "Cars", zhAnswer: "汽車總動員", hint: "A race car gets lost in a small town", zhHint: "一台賽車在小鎮中迷路", year: 2006 },
+    { emojis: "👧🐻🏔️🏴", answer: "Brave", zhAnswer: "勇敢傳說", hint: "A Scottish princess changes her fate", zhHint: "一位蘇格蘭公主想改變自己的命運", year: 2012 },
+    { emojis: "🌺👧🌊🐟", answer: "Moana", zhAnswer: "海洋奇緣", hint: "An island girl is chosen by the ocean", zhHint: "一位島嶼女孩被海洋選中", year: 2016 },
+    { emojis: "🦎💚🏰🌸", answer: "Tangled", zhAnswer: "魔髮奇緣", hint: "A princess with magical long hair", zhHint: "一位擁有神奇長髮的公主", year: 2010 },
+    { emojis: "🐸🎺🌹💃", answer: "The Princess and the Frog", zhAnswer: "公主與青蛙", hint: "A kiss, a frog, and New Orleans jazz", zhHint: "一個吻、一隻青蛙，還有紐奧良爵士樂", year: 2009 },
+    { emojis: "👻🌺🎸💀", answer: "Coco", zhAnswer: "可可夜總會", hint: "A boy visits the Land of the Dead", zhHint: "一位男孩來到亡靈世界", year: 2017 },
+    { emojis: "🦊🐰🌆🔍", answer: "Zootopia", zhAnswer: "動物方城市", hint: "A bunny cop and fox solve a mystery", zhHint: "兔子警官和狐狸一起破解謎案", year: 2016 },
+    { emojis: "🧊🦌🪄🤴", answer: "Frozen II", zhAnswer: "冰雪奇緣2", hint: "Into the unknown to discover magic's origin", zhHint: "前往未知之地，尋找魔法的起源", year: 2019 },
+    { emojis: "🍯🐝🌲🐻", answer: "Winnie the Pooh", zhAnswer: "小熊維尼", hint: "A bear loves honey in the Hundred Acre Wood", zhHint: "一隻小熊最愛蜂蜜", year: 2011 },
+    { emojis: "😱🚪🏭💡", answer: "Monsters Inc", zhAnswer: "怪獸電力公司", hint: "Screams power a city of monsters", zhHint: "尖叫聲為怪獸城市提供能源", year: 2001 }
+  ];
+
+  const TEXT = {
+    en: {
+      title: "Guess the Movie",
+      subtitle: "Decode the emojis and choose the right film!",
+      play: "Play Now →",
+      playAgain: "Play Again",
+      score: "SCORE",
+      question: "QUESTION",
+      time: "s",
+      hintButton: "💡 Use Hint",
+      left: "left",
+      rules: [
+        "10 questions per round",
+        "Answer fast for bonus points",
+        "3 hints available",
+        "Build a magical streak"
+      ],
+      complete: "Round Complete!",
+      points: "Points",
+      bestStreak: "Best Streak",
+      hintsLeft: "Hints Left",
+      outOf: "out of",
+      timeout: "Time's up! The answer was:",
+      credit: "Made by Kitty",
+      streak: "in a row!",
+      grades: ["Disney Legend", "True Fan", "Casual Viewer", "Just Getting Started"]
+    },
+    zh: {
+      title: "猜猜是哪部電影",
+      subtitle: "看 Emoji 提示，選出正確電影！",
+      play: "開始遊戲 →",
+      playAgain: "再玩一次",
+      score: "分數",
+      question: "題目",
+      time: "秒",
+      hintButton: "💡 使用提示",
+      left: "次",
+      rules: [
+        "每回合 10 題",
+        "越快回答，獎勵越高",
+        "共有 3 次提示機會",
+        "連續答對可以累積魔法連勝"
+      ],
+      complete: "遊戲完成！",
+      points: "分數",
+      bestStreak: "最佳連勝",
+      hintsLeft: "剩餘提示",
+      outOf: "滿分約",
+      timeout: "時間到！答案是：",
+      credit: "Kitty製作",
+      streak: "連勝！",
+      grades: ["電影傳奇高手", "真正粉絲", "休閒觀眾", "剛開始冒險"]
+    }
+  };
+
+  function shuffle(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function getMovieName(movie, lang) {
+    return lang === "zh" ? movie.zhAnswer : movie.answer;
+  }
+
+  function buildChoices(correctMovie, allMovies, lang) {
+    const correct = getMovieName(correctMovie, lang);
+    const wrong = allMovies
+      .filter(m => m.answer !== correctMovie.answer)
+      .map(m => getMovieName(m, lang));
+    const shuffled = shuffle([...new Set(wrong)]).slice(0, 3);
+    return shuffle([correct, ...shuffled]);
+  }
+
+  function App() {
+    const [lang, setLang] = useState("en");
+    const [phase, setPhase] = useState("start");
+    const [deck, setDeck] = useState([]);
+    const [index, setIndex] = useState(0);
+    const [score, setScore] = useState(0);
+    const [streak, setStreak] = useState(0);
+    const [bestStreak, setBestStreak] = useState(0);
+    const [chosen, setChosen] = useState(null);
+    const [feedback, setFeedback] = useState(null);
+    const [choices, setChoices] = useState([]);
+    const [hintUsed, setHintUsed] = useState(false);
+    const [hintsLeft, setHintsLeft] = useState(3);
+    const [showHint, setShowHint] = useState(false);
+    const [timeLeft, setTimeLeft] = useState(15);
+    const [timerActive, setTimerActive] = useState(false);
+    const [showStreak, setShowStreak] = useState(false);
+    const timerRef = useRef(null);
+
+    const TOTAL = 10;
+    const current = deck[index];
+    const t = TEXT[lang];
+
+    function startGame() {
+      const d = shuffle(MOVIES).slice(0, TOTAL);
+      setDeck(d);
+      setIndex(0);
+      setScore(0);
+      setStreak(0);
+      setBestStreak(0);
+      setChosen(null);
+      setFeedback(null);
+      setHintUsed(false);
+      setHintsLeft(3);
+      setShowHint(false);
+      setTimeLeft(15);
+      setPhase("playing");
+    }
+
+    useEffect(() => {
+      if (phase !== "playing" || !deck[index]) return;
+      setChoices(buildChoices(deck[index], MOVIES, lang));
+      setChosen(null);
+      setFeedback(null);
+      setHintUsed(false);
+      setShowHint(false);
+      setTimeLeft(15);
+      setTimerActive(true);
+    }, [index, phase, deck, lang]);
+
+    useEffect(() => {
+      if (!timerActive || feedback) return;
+      if (timeLeft <= 0) {
+        handleAnswer("__timeout__");
+        return;
+      }
+      timerRef.current = setTimeout(() => setTimeLeft(x => x - 1), 1000);
+      return () => clearTimeout(timerRef.current);
+    }, [timeLeft, timerActive, feedback]);
+
+    function handleAnswer(ans) {
+      clearTimeout(timerRef.current);
+      setTimerActive(false);
+      setChosen(ans);
+
+      const correctName = getMovieName(current, lang);
+      const isRight = ans === correctName;
+      setFeedback(isRight ? "right" : "wrong");
+
+      if (isRight) {
+        const bonus = hintUsed ? 0 : timeLeft >= 10 ? 3 : timeLeft >= 5 ? 2 : 1;
+        setScore(s => s + 1 + bonus);
+        const newStreak = streak + 1;
+        setStreak(newStreak);
+        if (newStreak > bestStreak) setBestStreak(newStreak);
+        if (newStreak >= 3) {
+          setShowStreak(true);
+          setTimeout(() => setShowStreak(false), 1600);
+        }
+      } else {
+        setStreak(0);
+      }
+
+      setTimeout(() => {
+        if (index + 1 >= TOTAL) setPhase("result");
+        else setIndex(i => i + 1);
+      }, 1500);
+    }
+
+    function useHint() {
+      if (hintsLeft <= 0 || showHint || feedback) return;
+      setHintsLeft(h => h - 1);
+      setHintUsed(true);
+      setShowHint(true);
+    }
+
+    function getGrade() {
+      const pct = score / (TOTAL * 4);
+      if (pct >= 0.85) return { label: t.grades[0], emoji: "🏆" };
+      if (pct >= 0.65) return { label: t.grades[1], emoji: "🌟" };
+      if (pct >= 0.45) return { label: t.grades[2], emoji: "🎬" };
+      return { label: t.grades[3], emoji: "🍿" };
+    }
+
+    const timerColor = timeLeft > 9 ? "#22c55e" : timeLeft > 4 ? "#f59e0b" : "#ef4444";
+    const timerPct = (timeLeft / 15) * 100;
+
+    function Background() {
+      return React.createElement(React.Fragment, null,
+        React.createElement("div", { className: "cloud cloud1" }),
+        React.createElement("div", { className: "cloud cloud2" }),
+
+        React.createElement("div", { className: "magic-orb orb-left" }),
+        React.createElement("div", { className: "magic-orb orb-right" }),
+
+        React.createElement("div", { className: "side-float float-left-1" }, "🎬"),
+        React.createElement("div", { className: "side-float float-left-2" }, "🌟"),
+        React.createElement("div", { className: "side-float float-right-1" }, "🏰"),
+        React.createElement("div", { className: "side-float float-right-2" }, "✨"),
+
+        React.createElement("div", { className: "sparkle s1" }, "✨"),
+        React.createElement("div", { className: "sparkle s2" }, "🌟"),
+        React.createElement("div", { className: "sparkle s3" }, "✨"),
+
+        React.createElement("div", { className: "castle" },
+          React.createElement("div", { className: "base" }),
+          React.createElement("div", { className: "tower tower1" }),
+          React.createElement("div", { className: "tower tower2" }),
+          React.createElement("div", { className: "tower tower3" }),
+          React.createElement("div", { className: "tower tower4" }),
+          React.createElement("div", { className: "tower tower5" }),
+          React.createElement("div", { className: "door" })
+        )
+      );
+    }
+
+    function LanguageToggle() {
+      return React.createElement("div", { className: "lang-toggle" },
+        React.createElement("button", {
+          className: lang === "en" ? "active" : "",
+          onClick: () => setLang("en")
+        }, "English"),
+        React.createElement("button", {
+          className: lang === "zh" ? "active" : "",
+          onClick: () => setLang("zh")
+        }, "繁體中文")
+      );
+    }
+
+    if (phase === "start") {
+      return React.createElement("div", { className: "page" },
+        React.createElement(Background),
+        React.createElement("div", { className: "credit" }, t.credit),
+        React.createElement(LanguageToggle),
+        React.createElement("div", { className: "card" },
+          React.createElement("div", { style: { fontSize: "5rem" } }, "🏰"),
+          React.createElement("h1", { className: "title" }, t.title),
+          React.createElement("p", { className: "subtitle" }, t.subtitle),
+          React.createElement("div", { className: "rules" },
+            t.rules.map((r, i) =>
+              React.createElement("div", { className: "rule", key: i },
+                React.createElement("span", null, ["🎯", "⚡", "💡", "✨"][i]),
+                React.createElement("span", null, r)
+              )
+            )
+          ),
+          React.createElement("button", { className: "button", onClick: startGame }, t.play)
+        )
+      );
+    }
+
+    if (phase === "result") {
+      const grade = getGrade();
+      return React.createElement("div", { className: "page" },
+        React.createElement(Background),
+        React.createElement("div", { className: "credit" }, t.credit),
+        React.createElement(LanguageToggle),
+        React.createElement("div", { className: "card" },
+          React.createElement("div", { style: { fontSize: "4.5rem" } }, grade.emoji),
+          React.createElement("h1", { className: "title" }, t.complete),
+          React.createElement("div", { className: "result-score" }, score),
+          React.createElement("div", { className: "subtitle" }, `${t.outOf} ${TOTAL * 4}`),
+          React.createElement("div", { className: "grade" }, grade.label),
+          React.createElement("div", { className: "stats" },
+            React.createElement("div", { className: "statbox" },
+              React.createElement("div", { className: "statnum" }, score),
+              React.createElement("div", { className: "statlabel" }, t.points)
+            ),
+            React.createElement("div", { className: "statbox" },
+              React.createElement("div", { className: "statnum" }, bestStreak),
+              React.createElement("div", { className: "statlabel" }, t.bestStreak)
+            ),
+            React.createElement("div", { className: "statbox" },
+              React.createElement("div", { className: "statnum" }, hintsLeft),
+              React.createElement("div", { className: "statlabel" }, t.hintsLeft)
+            )
+          ),
+          React.createElement("button", { className: "button", onClick: startGame }, t.playAgain)
+        )
+      );
+    }
+
+    return React.createElement("div", { className: "page" },
+      React.createElement(Background),
+      React.createElement("div", { className: "credit" }, t.credit),
+
+      showStreak && React.createElement("div", { className: "toast" }, `🔥 ${streak} ${t.streak}`),
+
+      React.createElement(LanguageToggle),
+
+      React.createElement("div", { className: "topbar" },
+        React.createElement("div", { className: "topstat" },
+          React.createElement("span", { className: "toplabel" }, t.score),
+          React.createElement("span", null, score)
+        ),
+        React.createElement("div", { className: "progress" },
+          React.createElement("div", {
+            className: "progress-fill",
+            style: { width: `${(index / TOTAL) * 100}%` }
+          })
+        ),
+        React.createElement("div", { className: "topstat" },
+          React.createElement("span", { className: "toplabel" }, t.question),
+          React.createElement("span", null, `${index + 1}/${TOTAL}`)
+        )
+      ),
+
+      React.createElement("div", { className: "timer" },
+        React.createElement("div", {
+          className: "timer-fill",
+          style: { width: `${timerPct}%`, background: timerColor }
+        })
+      ),
+
+      React.createElement("div", {
+        className: "time-text",
+        style: { color: timerColor }
+      }, `⏱ ${timeLeft}${t.time}`),
+
+      React.createElement("div", { className: "game-card" },
+        React.createElement("div", { className: "year" }, current ? current.year : ""),
+        React.createElement("div", { className: "emoji-box" }, current ? current.emojis : ""),
+
+        showHint && React.createElement("div", { className: "hint" },
+          `💡 ${lang === "zh" ? current.zhHint : current.hint}`
+        ),
+
+        React.createElement("div", { className: "choices" },
+          choices.map((c, i) => {
+            const correctName = getMovieName(current, lang);
+            const isCorrect = c === correctName;
+            const isChosen = c === chosen;
+            let cls = "choice";
+            if (feedback && isCorrect) cls += " correct";
+            if (feedback && isChosen && !isCorrect) cls += " wrong";
+
+            return React.createElement("button", {
+              key: i,
+              className: cls,
+              onClick: () => !feedback && handleAnswer(c),
+              disabled: !!feedback
+            }, c + (feedback && isCorrect ? " ✓" : "") + (feedback && isChosen && !isCorrect ? " ✗" : ""));
+          })
+        ),
+
+        React.createElement("button", {
+          className: "hint-button",
+          onClick: useHint,
+          disabled: hintsLeft <= 0 || showHint || !!feedback
+        }, `${t.hintButton} (${hintsLeft} ${t.left})`)
+      ),
+
+      chosen === "__timeout__" && React.createElement("div", { className: "timeout" },
+        `${t.timeout} ${getMovieName(current, lang)}`
+      )
+    );
+  }
+
+  ReactDOM.createRoot(document.getElementById("app")).render(React.createElement(App));
+</script>
